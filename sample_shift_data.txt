@@ -1,0 +1,46 @@
+
+EP
+
+
+Actions
+Home
+Calendar
+Employees
+Rotas
+
+Documents
+E-Learning
+
+
+What's New
+
+Help
+
+Feedback
+Settings
+Logout
+Rota and shift planning
+Active rotas
+Old rotas
+Shifts
+Rota settings
+Shifts
+
+
+
+Clear all filters
+Assignee
+Shift start
+Shift end
+Rota
+Label
+EP
+Employee Person
+Shift details
+11:00, Thu 17 Aug 23	19:30, Thu 17 Aug 23	GLA WK34	
+CLOSE 1
+EP
+Employee Person
+Shift details
+11:30, Fri 18 Aug 23	20:00, Fri 18 Aug 23	GLA WK34	
+CLOSE 2

@@ -1,0 +1,3 @@
+; Required to allow loading if the ics_writer code from cheese.clj
+{ :paths ["."]
+  :deps {tick/tick {:mvn/version "0.6.0"}} }
