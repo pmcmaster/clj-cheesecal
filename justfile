@@ -1,7 +1,8 @@
-#set quiet
+set quiet
 
 target_name := `cat target.txt`
 saved_rota_data_file := 'working/saved_rota_data.txt'
+intermediate_file := 'working/shifts_intermediate.txt'
 shift_calendar_file := 'working/shifts.ics'
 calendar_file_in_web_dir := '~/Online/dircon/temp/cheese.ics'
 temp_web_dir := parent_dir(calendar_file_in_web_dir)
@@ -9,17 +10,24 @@ temp_web_dir := parent_dir(calendar_file_in_web_dir)
 # Get latest data from rota site and post online as .ics
 cheese:
   just get_rota_data
-  just parse_data_to_ics
+  just parse_shifts_to_intermediate
+  just intermediate_to_ics
   just put_ics_online
 
 # Get latest data from rota site and save to .txt file
 get_rota_data:
-  echo `date` starting...
+  echo "`date` starting (Babashka)..."
   osascript cheese_scraper.applescript > {{saved_rota_data_file}}
 
+# Parse saved .txt file from web into dates and times only
+parse_shifts_to_intermediate:
+  bb -m shift-data/read-and-write '{{target_name}}' \
+  {{saved_rota_data_file}} > {{intermediate_file}}
+	
 # Parse saved .txt file and write out as a .ics
-parse_data_to_ics:
-  bb cheese_cal.clj '{{target_name}}' {{saved_rota_data_file}} > {{shift_calendar_file}}
+intermediate_to_ics:
+  fish -c 'test -s {{intermediate_file}}'
+  bb -m ics/write-entries {{intermediate_file}} > {{shift_calendar_file}}
 
 # Move & put latest .ics online
 put_ics_online:

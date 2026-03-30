@@ -6,54 +6,53 @@
   [line]
   (re-find #"^\d\d:\d\d," line))
 
-(defn is-header-row-for-target
-  "Is `line` a header row that precedes shift data?
-  Finds only header rows which are for `target` or when the previous line was
-  for target (designated by `in-target`"
-  [target in-target line]
-  (or (= target line)
-      (and in-target (= "Shift details" line))))
-
-(defn append-shift-line-for-target
-  "If line is `target` then return with `in-target` as true
-  If we are already `in-target` then append any matching shift lines to
-  lines-acc"
-  [target [lines-acc in-target] line]
-  (if (and in-target (is-shift-line line))
-    [(conj lines-acc line) in-target]
-    (if (is-header-row-for-target target in-target line)
-      [lines-acc true]
-      [lines-acc false])))
-
-(defn shift-lines-for-target
-  "Get only the relevant shift lines for `target` from `lines`"
+(defn only-shift-lines-for-target
+  "Find `target` in `lines` then output subsequent lines until a line is
+  encountered which should not be output."
   [target lines]
-  (let [[shift-lines _] (reduce
-                          (partial append-shift-line-for-target target)
-                          [[] false]
-                          lines)]
-    shift-lines))
+  (letfn [(find-target [[line & rest-lines] shift-lines]
+            (if line
+              (if (= line target)
+               #(found-target rest-lines shift-lines)
+               #(find-target rest-lines shift-lines))
+              ;; Exit point when `line` is nil: return shift-lines
+              shift-lines))
+          (found-target [[line & rest-lines] shift-lines]
+            (if (= line "Shift details")
+              #(found-target rest-lines shift-lines)
+              (if (is-shift-line line)
+                #(found-target rest-lines (conj shift-lines line))
+                #(find-target rest-lines shift-lines))))]
+    (trampoline find-target lines [])))
 
 (defn shift-times-from-file
   "Find shifts for `target` in `filename` and return a list of pairs of start
   and end times"
   [target filename]
   (with-open [rdr (clojure.java.io/reader filename)]
-    (shift-lines-for-target target (line-seq rdr))))
+    (only-shift-lines-for-target target (line-seq rdr))))
 
-(defn split-shift-line
-  "Get just the four start/end time/date items from `line`"
+(defn line-to-intermediate
+  "Get just the four start/end time/date items from `line`
+  Join only those items, with '-' between start and end"
   [line]
   (let [words (str/split line #",?\s")
         start-time (subvec words 0 1)
         start-date (subvec words 2 5)
         end-time (subvec words 5 6)
         end-date (subvec words 7 10)]
-    (map #(str/join " " %) [start-time start-date
-                            end-time end-date])))
+    (str/join " " (flatten [start-time start-date "-"
+                            end-time end-date]))))
 
 (defn read-from-file
+  "Read `filename` and return formatted start/end times for shifts for person
+  `target`"
   [target filename]
   (->> (shift-times-from-file target filename)
-       (map split-shift-line)))
+       (map line-to-intermediate)))
 
+(defn read-and-write
+  "Read `filename` and dump out shifts for `target`"
+  [target filename]
+  (doseq [shift-start-end (read-from-file target filename)]
+    (println shift-start-end)))

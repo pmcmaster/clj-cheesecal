@@ -40,8 +40,17 @@
 
 (defn parse-start-end-times
   "Parse start/end time/date strs into zoned times which are then formatted"
-  [[start-t-str start-d-str end-t-str end-d-str]]
+  [start-t-str start-d-str end-t-str end-d-str]
   (->> [[start-t-str start-d-str] [end-t-str end-d-str]]
        (map #(apply date-time-from %))
        (map format-date-time)))
 
+(defn intermediate-to-start-end
+  "Takes a line like the following and parses it into zoned start-end
+  datetimes
+  11:00 20 Mar 26 - 19:00 30 Mar 26"
+  [input-line]
+  (let [[start-t sd sm sy _sep end-t ed em ey] (str/split input-line #" ")
+        start-date (str/join " " [sd sm sy])
+        end-date (str/join " " [ed em ey])]
+    (parse-start-end-times start-t start-date end-t end-date)))
