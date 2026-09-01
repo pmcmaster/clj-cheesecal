@@ -1,5 +1,9 @@
 set quiet
 
+# job file which runs the steps for scraping data from web site (Applescript)
+# parsing that into intermediate dates, then outputting the two .ics files
+# Could be rewritten as Babashka commands?
+
 target_name := `cat target.txt`
 working_dir := 'working'
 saved_rota_data_file := join(working_dir, 'saved_rota_data.txt')
@@ -28,7 +32,8 @@ parse_shifts_to_intermediate:
   bb -m shift-data/read-and-write '{{target_name}}' \
   {{saved_rota_data_file}} > {{intermediate_file}}
 	
-# Parse saved .txt file and write out as a .ics
+# Parse saved .txt file and write out as .ics files, one for normal start/
+# end times of shifts, and another with only the end times
 intermediate_to_ics:
   fish -c 'test -s {{intermediate_file}}'
   bb -m ics/write-event-entries {{intermediate_file}} > {{shift_calendar_file}}

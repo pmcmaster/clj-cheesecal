@@ -1,5 +1,12 @@
 (ns shift-data
-  (:require [clojure.string :as str]))
+  (:require
+    [clojure.java.io] 
+    [clojure.string :as str]))
+
+;; This modile parses the saved web page content, extracting out the relevant
+;; times and dates for the specified 'target' person. The saved output is split
+;; across multiple lines, which must be combined into individual shift start/
+;; end times.
 
 (defn is-shift-line
   "Shift lines start with something like '08:30'. Is `line` one of them?"
@@ -36,7 +43,7 @@
   "Get just the four start/end time/date items from `line`
   Join only those items, with '-' between start and end"
   [line]
-  (let [words (str/split line #",?\s")
+  (let [words (str/split line #",?\s") ;; Maybe comma, followed by whitespace
         start-time (subvec words 0 1)
         start-date (subvec words 2 5)
         end-time (subvec words 5 6)
