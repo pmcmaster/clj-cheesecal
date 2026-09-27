@@ -3,7 +3,7 @@
     [clojure.java.io] 
     [clojure.string :as str]))
 
-;; This modile parses the saved web page content, extracting out the relevant
+;; This module parses the saved web page content, extracting out the relevant
 ;; times and dates for the specified 'target' person. The saved output is split
 ;; across multiple lines, which must be combined into individual shift start/
 ;; end times.

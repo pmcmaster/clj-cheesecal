@@ -22,7 +22,8 @@
   (format-date-time (t/instant)))
 
 (defn text-to-date-components
-  "Parse str components into a date. Assumes a 2-digit year."
+  "Parse str components into a list of components suitable for initialising a
+  datetime. Assumes a 2-digit year."
   [[day-str month-str year-str]]
   [(+ (Integer/parseInt year-str) 2000)
    (get month-to-ordinal month-str)
