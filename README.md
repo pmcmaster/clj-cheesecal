@@ -68,23 +68,23 @@ parse_file(ARGV[1])
 ### Ruby Process
 The end-to-end process using the Ruby implementaton was as follows:
 1. Applescript interaction with web site
-  1. Open the relevant web page in Safari
-  2. Detect if we get kicked back to a login page, and if-so, login using the stored credentials
-  3. Save the text of the web page to a text file in the working directory
+   1. Open the relevant web page in Safari
+   2. Detect if we get kicked back to a login page, and if-so, login using the stored credentials
+   3. Save the text of the web page to a text file in the working directory
 2. Script runs to process the saved text content and output as a `.ics` file
-  1. Identify the relevant lines in the saved web content, looking for shifts for the correct person, and start and end dates and times for each shift
-  2. For each shift identified, add these to a `.ics` file using a simple template
+   1. Identify the relevant lines in the saved web content, looking for shifts for the correct person, and start and end dates and times for each shift
+   2. For each shift identified, add these to a `.ics` file using a simple template
 3. Sync the output `.ics` file to an online location. (This can then be subscribed to by calendar software.)
 
 ## Clojure implementation
 The Clojure implemetation further splits the process out into further tasks.
 1. *(Unchanged) Applescript interaction with web site*
-  1. *Open the relevant web page in Safari*
-  2. *Detect if we get kicked back to a login page, and if-so, login using the stored credentials*
-  3. *Save the text of the web page to a text file in the working directory*
+   1. *Open the relevant web page in Safari*
+   2. *Detect if we get kicked back to a login page, and if-so, login using the stored credentials*
+   3. *Save the text of the web page to a text file in the working directory*
 2. Script runs to process the saved text content and **output to an intermediate format**
-  1. Identify the relevant lines in the saved web content, looking for shifts for the correct person, and start and end dates and times for each shift
-  2. Produce a simple text file with a pair of start date-time / end date-time, one-line per-shift,
+   1. Identify the relevant lines in the saved web content, looking for shifts for the correct person, and start and end dates and times for each shift
+   2. Produce a simple text file with a pair of start date-time / end date-time, one-line per-shift,
 3. Read the text file with the start/end dates/times and use that to output the final `.ics` file, using templates
 4. *(Unchanged) Sync the output `.ics` file to an online location. (This can then be subscribed to by calendar software.)*
 
